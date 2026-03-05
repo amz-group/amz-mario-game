@@ -3,1055 +3,505 @@
 <html lang="ku" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>ماریۆی کوردی</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700;900&display=swap');
-
-:root {
-–sky: #1a0a2e;
-–ground: #2d4a1e;
-–gold: #f5c518;
-–red: #c0392b;
-–green: #27ae60;
-–white: #f0e6d3;
-–brown: #8B4513;
-}
-
-- { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-background: var(–sky);
-font-family: ‘Noto Sans Arabic’, ‘Segoe UI’, Tahoma, sans-serif;
-overflow: hidden;
-user-select: none;
--webkit-user-select: none;
-}
-
-#screen {
-position: relative;
-width: 100vw;
-height: 100vh;
-overflow: hidden;
-background: linear-gradient(to bottom, #0d0620 0%, #1a0a2e 40%, #2d1b5e 100%);
-}
-
-/* Stars */
-.star {
-position: absolute;
-background: white;
-border-radius: 50%;
-animation: twinkle 2s infinite alternate;
-}
-@keyframes twinkle { from { opacity: 0.3; } to { opacity: 1; } }
-
-/* Mountains */
-.mountain {
-position: absolute;
-bottom: 80px;
-width: 0;
-height: 0;
-border-style: solid;
-}
-
-/* Ground */
-#ground {
-position: absolute;
-bottom: 0;
-width: 100%;
-height: 80px;
-background: linear-gradient(to bottom, #2d5a1b, #1a3a0a);
-border-top: 4px solid #4a8a2e;
-overflow: hidden;
-}
-#ground::before {
-content: ‘’;
-position: absolute;
-top: 0; left: 0;
-width: 100%; height: 100%;
-background: repeating-linear-gradient(
-90deg,
-transparent, transparent 40px,
-rgba(0,0,0,0.1) 40px, rgba(0,0,0,0.1) 80px
-);
-}
-
-/* HUD */
-#hud {
-position: absolute;
-top: 0; left: 0; right: 0;
-padding: 10px 20px;
-display: flex;
-justify-content: space-between;
-align-items: center;
-background: rgba(0,0,0,0.5);
-backdrop-filter: blur(4px);
-z-index: 100;
-border-bottom: 2px solid rgba(245,197,24,0.3);
-}
-.hud-item {
-text-align: center;
-color: var(–gold);
-font-size: 14px;
-font-weight: 700;
-}
-.hud-item span {
-display: block;
-font-size: 22px;
-color: white;
-}
-
-/* Player - Kurdish Mareo */
-#player {
-position: absolute;
-width: 44px;
-height: 60px;
-z-index: 50;
-transition: transform 0.05s;
-}
-
-.player-svg {
-width: 100%;
-height: 100%;
-}
-
-/* Platforms */
-.platform {
-position: absolute;
-height: 20px;
-background: linear-gradient(to bottom, #4a8a2e, #2d5a1b);
-border-top: 3px solid #6aaa4e;
-border-radius: 4px;
-box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-}
-
-/* Coins */
-.coin {
-position: absolute;
-width: 24px;
-height: 24px;
-background: radial-gradient(circle at 35% 35%, #ffd700, #b8860b);
-border-radius: 50%;
-border: 2px solid #ffd700;
-box-shadow: 0 0 8px #ffd700;
-z-index: 40;
-animation: coinFloat 1s ease-in-out infinite alternate;
-}
-@keyframes coinFloat { from { transform: translateY(0); } to { transform: translateY(-5px); } }
-
-/* Coin collect animation */
-.coin-pop {
-position: absolute;
-color: var(–gold);
-font-size: 18px;
-font-weight: 900;
-animation: coinPop 0.6s ease-out forwards;
-pointer-events: none;
-z-index: 200;
-}
-@keyframes coinPop {
-0% { transform: translateY(0) scale(1); opacity: 1; }
-100% { transform: translateY(-60px) scale(1.5); opacity: 0; }
-}
-
-/* Enemies - Kurdish style */
-.enemy {
-position: absolute;
-width: 40px;
-height: 40px;
-z-index: 45;
-}
-
-/* Blocks */
-.block {
-position: absolute;
-width: 40px;
-height: 40px;
-background: linear-gradient(135deg, #d4a017, #8B6914);
-border: 3px solid #f5c518;
-border-radius: 4px;
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 18px;
-box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-cursor: pointer;
-z-index: 40;
-}
-.block:hover { filter: brightness(1.2); }
-.block.empty {
-background: linear-gradient(135deg, #8B6914, #5a4010);
-border-color: #8B6914;
-}
-
-/* Flag / End */
-#flag {
-position: absolute;
-bottom: 80px;
-right: 150px;
-z-index: 40;
-}
-.flag-pole {
-width: 6px;
-height: 120px;
-background: linear-gradient(to bottom, #ccc, #888);
-border-radius: 3px;
-}
-.flag-cloth {
-position: absolute;
-top: 0; left: 6px;
-width: 40px;
-height: 28px;
-background: linear-gradient(135deg, #c0392b, #e74c3c);
-clip-path: polygon(0 0, 100% 50%, 0 100%);
-animation: wave 0.5s ease-in-out infinite alternate;
-transform-origin: left;
-}
-@keyframes wave { from { skewX(-5deg); } to { skewX(5deg); } }
-
-/* Screens */
-.overlay {
-position: absolute;
-inset: 0;
-background: rgba(0,0,0,0.85);
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-z-index: 500;
-backdrop-filter: blur(6px);
-}
-.overlay h1 {
-font-size: clamp(32px, 6vw, 56px);
-color: var(–gold);
-text-shadow: 0 0 30px rgba(245,197,24,0.7);
-margin-bottom: 10px;
-letter-spacing: 2px;
-animation: pulse 1.5s ease-in-out infinite alternate;
-}
-@keyframes pulse { from { text-shadow: 0 0 20px rgba(245,197,24,0.5); } to { text-shadow: 0 0 50px rgba(245,197,24,1); } }
-.overlay p {
-font-size: 18px;
-color: #ddd;
-margin: 8px 0;
-}
-.overlay .score-display {
-font-size: 28px;
-color: white;
-margin: 15px 0;
-}
-.btn {
-margin-top: 20px;
-padding: 14px 40px;
-font-size: 20px;
-font-family: inherit;
-background: linear-gradient(135deg, #c0392b, #e74c3c);
-color: white;
-border: none;
-border-radius: 50px;
-cursor: pointer;
-font-weight: 700;
-letter-spacing: 1px;
-box-shadow: 0 6px 20px rgba(192,57,43,0.5);
-transition: transform 0.15s, box-shadow 0.15s;
-}
-.btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 10px 30px rgba(192,57,43,0.7); }
-.btn:active { transform: translateY(0) scale(0.97); }
-
-/* Mobile controls */
-#mobile-controls {
-position: fixed;
-bottom: 20px;
-left: 0; right: 0;
-display: none;
-justify-content: space-between;
-padding: 0 20px;
-z-index: 300;
-}
-.ctrl-group { display: flex; gap: 10px; }
-.ctrl-btn {
-width: 60px; height: 60px;
-background: rgba(255,255,255,0.15);
-border: 2px solid rgba(255,255,255,0.3);
-border-radius: 50%;
-color: white;
-font-size: 22px;
-cursor: pointer;
-backdrop-filter: blur(4px);
-display: flex; align-items: center; justify-content: center;
-transition: background 0.1s;
--webkit-tap-highlight-color: transparent;
-}
-.ctrl-btn:active { background: rgba(255,255,255,0.35); transform: scale(0.93); }
-
-@media (max-width: 768px), (pointer: coarse) {
-#mobile-controls { display: flex; }
-}
-
-/* Jump animation */
-@keyframes jumpAnim {
-0% { transform: scaleY(1); }
-20% { transform: scaleY(0.8) scaleX(1.2); }
-50% { transform: scaleY(1.1); }
-100% { transform: scaleY(1); }
-}
-
-/* Walking animation */
-@keyframes walkCycle {
-0%, 100% { transform: rotate(0deg); }
-25% { transform: rotate(5deg); }
-75% { transform: rotate(-5deg); }
-}
-
-#player.walking { animation: walkCycle 0.3s linear infinite; }
-#player.jumping { animation: none; }
-
-/* Dust particles */
-.dust {
-position: absolute;
-width: 8px; height: 8px;
-background: rgba(200,200,100,0.6);
-border-radius: 50%;
-pointer-events: none;
-animation: dustFly 0.5s ease-out forwards;
-z-index: 30;
-}
-@keyframes dustFly {
-0% { transform: translate(0,0) scale(1); opacity: 0.8; }
-100% { transform: translate(var(–dx), var(–dy)) scale(0); opacity: 0; }
-}
-
-/* Lives hearts */
-.heart { color: #e74c3c; font-size: 20px; }
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0d0620;font-family:'Noto Sans Arabic','Segoe UI',Tahoma,sans-serif;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:none;}
+#screen{position:fixed;inset:0;overflow:hidden;background:linear-gradient(to bottom,#0d0620 0%,#1a0a2e 50%,#2d1b5e 100%);}
+.star{position:absolute;background:white;border-radius:50%;animation:twinkle 2s infinite alternate;}
+@keyframes twinkle{from{opacity:.2}to{opacity:1}}
+.mountain{position:absolute;width:0;height:0;border-style:solid;}
+#ground{position:absolute;bottom:0;width:100%;height:80px;background:linear-gradient(to bottom,#2d5a1b,#1a3a0a);border-top:4px solid #4a8a2e;}
+#hud{position:absolute;top:0;left:0;right:0;padding:8px 16px;display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:100;border-bottom:2px solid rgba(245,197,24,.3);}
+.hud-item{text-align:center;color:#f5c518;font-size:13px;font-weight:700;}
+.hud-item span{display:block;font-size:20px;color:white;}
+.hud-title{font-size:18px;color:#f5c518;font-weight:900;text-align:center;}
+.hud-sub{font-size:11px;color:#aaa;text-align:center;}
+#player{position:absolute;width:44px;height:60px;z-index:50;}
+.platform{position:absolute;height:20px;background:linear-gradient(to bottom,#4a8a2e,#2d5a1b);border-top:3px solid #6aaa4e;border-radius:4px;box-shadow:0 4px 10px rgba(0,0,0,.5);}
+.coin{position:absolute;width:24px;height:24px;background:radial-gradient(circle at 35% 35%,#ffd700,#b8860b);border-radius:50%;border:2px solid #ffd700;box-shadow:0 0 8px #ffd700;z-index:40;animation:coinFloat 1s ease-in-out infinite alternate;}
+@keyframes coinFloat{from{transform:translateY(0)}to{transform:translateY(-5px)}}
+.block{position:absolute;width:40px;height:40px;background:linear-gradient(135deg,#d4a017,#8B6914);border:3px solid #f5c518;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 10px rgba(0,0,0,.5);z-index:40;}
+.block.empty{background:linear-gradient(135deg,#8B6914,#5a4010);border-color:#8B6914;}
+.enemy{position:absolute;width:40px;height:40px;z-index:45;}
+.pop{position:absolute;color:#f5c518;font-size:16px;font-weight:900;pointer-events:none;z-index:200;animation:popUp .7s ease-out forwards;}
+@keyframes popUp{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-60px) scale(1.4);opacity:0}}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:500;backdrop-filter:blur(6px);}
+.overlay h1{font-size:clamp(28px,6vw,52px);color:#f5c518;text-shadow:0 0 30px rgba(245,197,24,.7);margin-bottom:10px;animation:pulse 1.5s ease-in-out infinite alternate;}
+@keyframes pulse{from{text-shadow:0 0 15px rgba(245,197,24,.4)}to{text-shadow:0 0 45px #f5c518}}
+.overlay p{font-size:16px;color:#ccc;margin:6px 0;}
+.sco{font-size:26px;color:white;margin:12px 0;}
+.btn{margin-top:18px;padding:14px 40px;font-size:20px;font-family:inherit;background:linear-gradient(135deg,#c0392b,#e74c3c);color:white;border:none;border-radius:50px;cursor:pointer;font-weight:700;box-shadow:0 6px 20px rgba(192,57,43,.5);transition:transform .15s,box-shadow .15s;}
+.btn:hover{transform:translateY(-3px) scale(1.05);}
+.btn:active{transform:scale(.95);}
+#mc{position:fixed;bottom:16px;left:0;right:0;display:none;justify-content:space-between;align-items:center;padding:0 20px;z-index:9999;pointer-events:none;}
+.cg{display:flex;gap:10px;pointer-events:all;}
+.cb{width:66px;height:66px;background:rgba(255,255,255,.16);border:2px solid rgba(255,255,255,.35);border-radius:50%;color:white;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.cb:active{background:rgba(255,255,255,.38);transform:scale(.9);}
+@media(max-width:900px),(pointer:coarse){#mc{display:flex;}}
+#player.walk{animation:wk .28s linear infinite;}
+@keyframes wk{0%,100%{rotate:0deg}25%{rotate:4deg}75%{rotate:-4deg}}
 </style>
-
 </head>
 <body>
-
 <div id="screen">
-  <!-- HUD -->
   <div id="hud">
-    <div class="hud-item">
-      <div>دەنگ</div>
-      <span id="score-display">0</span>
-    </div>
-    <div class="hud-item" style="font-size:26px;">🏔️ ماریۆی کوردی</div>
-    <div class="hud-item">
-      <div>گیان</div>
-      <span id="lives-display">❤️❤️❤️</span>
-    </div>
-  </div>
-
-  <!-- Game elements injected by JS -->
-
-  <!-- Mobile controls -->
-
-  <div id="mobile-controls">
-    <div class="ctrl-group">
-      <button class="ctrl-btn" id="btn-left">◀</button>
-      <button class="ctrl-btn" id="btn-right">▶</button>
-    </div>
-    <div class="ctrl-group">
-      <button class="ctrl-btn" id="btn-jump">⬆</button>
-    </div>
+    <div class="hud-item"><div>دەنگ</div><span id="sc">0</span></div>
+    <div style="text-align:center"><div class="hud-title">🏔️ ماریۆی کوردی</div><div class="hud-sub" id="dist">📏 0 مەتر</div></div>
+    <div class="hud-item"><div>گیان</div><span id="lv">❤️❤️❤️</span></div>
   </div>
 </div>
 
-<!-- Start Screen -->
+<div id="mc">
+  <div class="cg">
+    <button class="cb" id="bL">◀</button>
+    <button class="cb" id="bR">▶</button>
+  </div>
+  <div class="cg">
+    <button class="cb" id="bJ">⬆</button>
+  </div>
+</div>
 
-<div class="overlay" id="start-screen">
-  <div style="font-size:80px; margin-bottom:10px;">🏔️</div>
+<!-- Start -->
+
+<div class="overlay" id="OvS">
+  <div style="font-size:72px">🏔️</div>
   <h1>ماریۆی کوردی</h1>
   <p>کوردستانی جوان بپارێزە!</p>
-  <p style="font-size:14px; color:#aaa; margin-top:5px;">← → بۆ بازدان | ↑ یان بۆشایی بۆ باڵپەڕین</p>
-  <p style="font-size:14px; color:#aaa;">بکوژە دوژمنەکان، دەنگ کۆبکەرەوە</p>
+  <p style="font-size:13px;color:#888;margin-top:4px">◀ ▶ بازدان &nbsp;|&nbsp; ⬆ باڵپەڕین</p>
+  <p style="font-size:13px;color:#888">دوژمنەکان بکوژە، دراو کۆبکەرەوە — ماپ بێکۆتایە!</p>
   <button class="btn" onclick="startGame()">دەست پێبکە! 🎮</button>
 </div>
 
-<!-- Game Over Screen -->
+<!-- Game Over -->
 
-<div class="overlay" id="gameover-screen" style="display:none;">
-  <div style="font-size:70px;">😢</div>
-  <h1 style="color:#e74c3c;">یاری تەواو بوو</h1>
-  <div class="score-display">دەنگت: <span id="final-score">0</span></div>
-  <button class="btn" onclick="startGame()">دووبارە بکەرەوە 🔄</button>
-</div>
-
-<!-- Win Screen -->
-
-<div class="overlay" id="win-screen" style="display:none;">
-  <div style="font-size:70px; animation: pulse 0.8s infinite alternate;">🏆</div>
-  <h1 style="color:#f5c518;">بەڕێوەچوویت!</h1>
-  <p>کوردستان ئازاد بوو! 🌟</p>
-  <div class="score-display">دەنگت: <span id="win-score">0</span></div>
-  <button class="btn" onclick="startGame()">دووبارە بکەرەوە 🔄</button>
+<div class="overlay" id="OvG" style="display:none">
+  <div style="font-size:64px">😢</div>
+  <h1 style="color:#e74c3c">یاری تەواو بوو</h1>
+  <div class="sco">دەنگت: <span id="fsco">0</span></div>
+  <div style="color:#aaa;font-size:14px">📏 <span id="fdist">0</span> مەتر</div>
+  <button class="btn" onclick="startGame()">دووبارەی بکەرەوە 🔄</button>
 </div>
 
 <script>
-// ============================================================
-// KURDISH MAREO - Full Game Engine
-// ============================================================
-
-const screen = document.getElementById('screen');
+// ─── GLOBALS ───────────────────────────────────────────────────
+const SCR   = document.getElementById('screen');
+const KEYS  = {};
 let W = window.innerWidth, H = window.innerHeight;
+let HUD_H   = 60;
+let FLOOR_T = 0;   // screen-top-px of floor surface
+const GRAV  = 0.55;
+const JFORCE= -14;
+const SPD   = 4;
 
-// Game State
-let state = {
-  running: false,
-  score: 0,
-  lives: 3,
-  level: 1
-};
+let state={running:false,score:0,lives:3};
+let player={el:null,x:0,y:0,vx:0,vy:0,w:44,h:60,onGround:false,inv:false,invT:0,faceR:true};
+let platforms=[], coins=[], enemies=[], blocks=[];
+let cameraX=0;
+let genUpTo=0, scoreDist=0, rng=1;
+let raf, lastT=0;
 
-// Physics constants
-const GRAVITY = 0.6;
-const JUMP_FORCE = -14;
-const MOVE_SPEED = 4;
-let HUD_H = 60;   // updated after DOM ready
-let FLOOR_TOP;    // top-px of floor surface (updated on start)
+function rand(){rng=(rng*16807)%2147483647;return(rng-1)/2147483646;}
 
-// All coordinates are screen top-px (player.y = top edge of player in px from top of viewport)
-
-// Player object
-let player = {
-  el: null,
-  x: 100,
-  y: 0,
-  vy: 0,
-  vx: 0,
-  onGround: false,
-  facingRight: true,
-  width: 44,
-  height: 60,
-  invincible: false,
-  invTimer: 0
-};
-
-// World objects
-let platforms = [];
-let coins = [];
-let enemies = [];
-let blocks = [];
-let worldOffset = 0;
-let cameraX = 0;
-const WORLD_WIDTH = 3000;
-
-// Input
-let keys = {};
-
-// Game loop
-let animFrame;
-let lastTime = 0;
-
-// ============================================================
-// INIT
-// ============================================================
-
-function createStars() {
-  for (let i = 0; i < 80; i++) {
-    let s = document.createElement('div');
-    s.className = 'star';
-    let size = Math.random() * 2.5 + 0.5;
-    s.style.cssText = `width:${size}px;height:${size}px;top:${Math.random()*60}%;left:${Math.random()*100}%;animation-delay:${Math.random()*2}s;animation-duration:${1+Math.random()*2}s`;
-    screen.appendChild(s);
-  }
-}
-
-function createMountains() {
-  let colors = ['#1a3a6e','#24507a','#1d4060'];
-  let positions = [
-    {l:5, s:160, c:0}, {l:18, s:200, c:1}, {l:35, s:140, c:2},
-    {l:52, s:180, c:0}, {l:68, s:220, c:1}, {l:82, s:155, c:2}
-  ];
-  positions.forEach(p => {
-    let m = document.createElement('div');
-    m.className = 'mountain';
-    m.style.cssText = `left:${p.l}%;border-left:${p.s/2}px solid transparent;border-right:${p.s/2}px solid transparent;border-bottom:${p.s}px solid ${colors[p.c]};bottom:78px;`;
-    screen.appendChild(m);
-  });
-}
-
-function buildLevel() {
-  // Clear existing
-  document.querySelectorAll('.platform,.coin,.enemy,.block,.coin-pop,.dust').forEach(e=>e.remove());
-  platforms = []; coins = []; enemies = []; blocks = [];
-
-  // Ground platform (full level)
-  let g = document.getElementById('ground');
-  if (!g) {
-    g = document.createElement('div');
-    g.id = 'ground';
-    screen.appendChild(g);
-  }
-
-  // Define level layout - ALL y values = screen top-px of the element's TOP edge
-  // FLOOR_TOP = H - 80  (top of ground bar)
-  let FT = FLOOR_TOP; // shorthand
-  let layout = {
-    platforms: [
-      {x:300,  y:FT-120, w:120},
-      {x:480,  y:FT-180, w:100},
-      {x:650,  y:FT-120, w:140},
-      {x:850,  y:FT-200, w:100},
-      {x:1050, y:FT-150, w:120},
-      {x:1280, y:FT-220, w:100},
-      {x:1500, y:FT-160, w:140},
-      {x:1720, y:FT-200, w:100},
-      {x:1950, y:FT-140, w:120},
-      {x:2200, y:FT-220, w:100},
-      {x:2450, y:FT-160, w:140},
-      {x:2700, y:FT-100, w:200},
-    ],
-    coins: [
-      {x:320,  y:FT-160}, {x:400,  y:FT-220}, {x:460,  y:FT-220},
-      {x:500,  y:FT-220}, {x:520,  y:FT-220}, {x:670,  y:FT-160},
-      {x:690,  y:FT-160}, {x:710,  y:FT-160}, {x:870,  y:FT-240},
-      {x:900,  y:FT-240}, {x:1070, y:FT-190}, {x:1100, y:FT-190},
-      {x:1300, y:FT-260}, {x:1320, y:FT-260}, {x:1520, y:FT-200},
-      {x:1540, y:FT-200}, {x:1740, y:FT-240}, {x:1770, y:FT-240},
-      {x:1970, y:FT-180}, {x:2000, y:FT-180}, {x:2220, y:FT-260},
-      {x:2250, y:FT-260}, {x:2470, y:FT-200}, {x:2500, y:FT-200},
-    ],
-    enemies: [
-      {x:500, dir:1}, {x:800, dir:-1}, {x:1100, dir:1},
-      {x:1400, dir:-1}, {x:1700, dir:1}, {x:2000, dir:-1},
-      {x:2300, dir:1}, {x:2600, dir:-1},
-    ],
-    blocks: [
-      {x:350,  y:FT-160, has:true},
-      {x:700,  y:FT-180, has:true},
-      {x:1000, y:FT-200, has:true},
-      {x:1600, y:FT-220, has:true},
-      {x:2100, y:FT-180, has:true},
-    ]
-  };
-
-  // Create platforms
-  layout.platforms.forEach(p => {
-    let el = document.createElement('div');
-    el.className = 'platform';
-    el.style.cssText = `width:${p.w}px;height:20px;left:${p.x}px;top:${p.y}px;`;
-    screen.appendChild(el);
-    platforms.push({el, x:p.x, y:p.y, w:p.w, h:20});
-  });
-
-  // Create coins
-  layout.coins.forEach(c => {
-    let el = document.createElement('div');
-    el.className = 'coin';
-    el.style.cssText = `left:${c.x}px;top:${c.y}px;`;
-    screen.appendChild(el);
-    coins.push({el, x:c.x, y:c.y, w:24, h:24, collected:false});
-  });
-
-  // Create enemies
-  layout.enemies.forEach(e => {
-    let el = document.createElement('div');
-    el.className = 'enemy';
-    el.innerHTML = createEnemySVG();
-    el.style.cssText = `left:${e.x}px;top:${FLOOR_TOP - 40}px;`;
-    screen.appendChild(el);
-    enemies.push({el, x:e.x, y:FLOOR_TOP-40, w:40, h:40, dir:e.dir, speed:1.5, alive:true});
-  });
-
-  // Create blocks
-  layout.blocks.forEach(b => {
-    let el = document.createElement('div');
-    el.className = 'block';
-    el.innerHTML = '❓';
-    el.style.cssText = `left:${b.x}px;top:${b.y}px;`;
-    screen.appendChild(el);
-    blocks.push({el, x:b.x, y:b.y, w:40, h:40, has:b.has});
-  });
-
-  // Flag
-  let flagEl = document.getElementById('flag');
-  if (flagEl) flagEl.remove();
-  let flag = document.createElement('div');
-  flag.id = 'flag';
-  flag.innerHTML = '<div class="flag-pole"></div><div class="flag-cloth"></div>';
-  flag.style.cssText = `position:absolute;top:${FLOOR_TOP-120}px;left:2820px;z-index:40;`;
-  screen.appendChild(flag);
-}
-
-function createKurdishPlayerSVG(facingRight) {
-  let flip = facingRight ? '' : 'transform="scale(-1,1) translate(-44,0)"';
-  return `<svg viewBox="0 0 44 60" xmlns="http://www.w3.org/2000/svg" ${flip}>
-    <!-- Chest/Jacket - Kurdish Rank (jacket) dark colored -->
+// ─── SVG SPRITES ───────────────────────────────────────────────
+function playerSVG(r){
+  let f=r?'':'transform="scale(-1,1) translate(-44,0)"';
+  return`<svg viewBox="0 0 44 60" xmlns="http://www.w3.org/2000/svg" ${f}>
     <rect x="8" y="24" width="28" height="22" rx="3" fill="#1a2a4a"/>
-    <!-- Kurdish belt decoration -->
     <rect x="8" y="38" width="28" height="5" rx="1" fill="#c0392b"/>
-    <rect x="16" y="38" width="4" height="5" fill="#f5c518"/>
-    <rect x="24" y="38" width="4" height="5" fill="#f5c518"/>
-    <!-- Shirt collar -->
+    <rect x="15" y="38" width="4" height="5" fill="#f5c518"/>
+    <rect x="25" y="38" width="4" height="5" fill="#f5c518"/>
     <polygon points="18,24 26,24 22,30" fill="#f0e6d3"/>
-    <!-- Jacket trim -->
     <line x1="8" y1="24" x2="8" y2="46" stroke="#f5c518" stroke-width="1.5"/>
     <line x1="36" y1="24" x2="36" y2="46" stroke="#f5c518" stroke-width="1.5"/>
-    <!-- Pants - Kurdish Shalwar (baggy pants) -->
     <path d="M10,46 Q6,58 10,60 L18,60 L20,52 L24,52 L26,60 L34,60 Q38,58 34,46 Z" fill="#2c3e50"/>
-    <!-- Shalwar details (baggy folds) -->
-    <path d="M12,46 Q8,52 10,58" stroke="#1a252f" stroke-width="1" fill="none"/>
-    <path d="M32,46 Q36,52 34,58" stroke="#1a252f" stroke-width="1" fill="none"/>
-    <!-- Shoes - Kurdish pointy shoes (giveh style) -->
     <ellipse cx="12" cy="60" rx="7" ry="4" fill="#5D4037"/>
     <ellipse cx="32" cy="60" rx="7" ry="4" fill="#5D4037"/>
-    <path d="M5,60 Q12,56 19,60" fill="#4E342E"/>
-    <path d="M25,60 Q32,56 39,60" fill="#4E342E"/>
-    <!-- Neck -->
     <rect x="19" y="18" width="6" height="7" rx="2" fill="#d4956a"/>
-    <!-- Head -->
     <ellipse cx="22" cy="13" rx="12" ry="11" fill="#d4956a"/>
-    <!-- Hair -->
-    <ellipse cx="22" cy="4" rx="11" ry="6" fill="#2c1810"/>
-    <rect x="11" y="4" width="22" height="8" rx="2" fill="#2c1810"/>
-    <!-- Kufiyya / Jamadani pattern hint on top -->
-    <rect x="11" y="3" width="22" height="4" rx="2" fill="#1a3a6e"/>
-    <line x1="13" y1="3" x2="13" y2="7" stroke="#f5c518" stroke-width="0.8"/>
-    <line x1="17" y1="3" x2="17" y2="7" stroke="#f5c518" stroke-width="0.8"/>
-    <line x1="21" y1="3" x2="21" y2="7" stroke="#f5c518" stroke-width="0.8"/>
-    <line x1="25" y1="3" x2="25" y2="7" stroke="#f5c518" stroke-width="0.8"/>
-    <line x1="29" y1="3" x2="29" y2="7" stroke="#f5c518" stroke-width="0.8"/>
-    <!-- Face features -->
+    <rect x="11" y="3" width="22" height="7" rx="2" fill="#1a3a6e"/>
+    <line x1="13" y1="3" x2="13" y2="10" stroke="#f5c518" stroke-width=".8"/>
+    <line x1="17" y1="3" x2="17" y2="10" stroke="#f5c518" stroke-width=".8"/>
+    <line x1="21" y1="3" x2="21" y2="10" stroke="#f5c518" stroke-width=".8"/>
+    <line x1="25" y1="3" x2="25" y2="10" stroke="#f5c518" stroke-width=".8"/>
+    <line x1="29" y1="3" x2="29" y2="10" stroke="#f5c518" stroke-width=".8"/>
     <ellipse cx="17" cy="13" rx="2.5" ry="2.5" fill="white"/>
     <ellipse cx="27" cy="13" rx="2.5" ry="2.5" fill="white"/>
-    <circle cx="17.5" cy="13.5" r="1.5" fill="#1a0a0a"/>
-    <circle cx="27.5" cy="13.5" r="1.5" fill="#1a0a0a"/>
-    <!-- Moustache (Kurdish style) -->
+    <circle cx="17.5" cy="13.5" r="1.5" fill="#111"/>
+    <circle cx="27.5" cy="13.5" r="1.5" fill="#111"/>
     <path d="M17,18 Q22,20 27,18" stroke="#2c1810" stroke-width="1.5" fill="none"/>
-    <!-- Arms -->
     <rect x="0" y="26" width="9" height="5" rx="3" fill="#1a2a4a"/>
     <rect x="35" y="26" width="9" height="5" rx="3" fill="#1a2a4a"/>
     <circle cx="4" cy="28" r="3" fill="#d4956a"/>
     <circle cx="40" cy="28" r="3" fill="#d4956a"/>
-    <!-- Kurdish decoration on jacket -->
     <circle cx="22" cy="32" r="2" fill="#f5c518"/>
-    <circle cx="17" cy="30" r="1.2" fill="#c0392b"/>
-    <circle cx="27" cy="30" r="1.2" fill="#c0392b"/>
   </svg>`;
 }
 
-function createEnemySVG() {
-  return `<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-    <!-- Enemy body - dark creature -->
+function enemySVG(){
+  return`<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
     <ellipse cx="20" cy="28" rx="14" ry="10" fill="#8B0000"/>
-    <!-- Eyes -->
     <circle cx="13" cy="20" r="6" fill="#cc0000"/>
     <circle cx="27" cy="20" r="6" fill="#cc0000"/>
     <circle cx="13" cy="20" r="4" fill="white"/>
     <circle cx="27" cy="20" r="4" fill="white"/>
-    <circle cx="14" cy="20" r="2.5" fill="#1a0000"/>
-    <circle cx="28" cy="20" r="2.5" fill="#1a0000"/>
-    <!-- Eyebrows angry -->
+    <circle cx="14" cy="20" r="2.5" fill="#100"/>
+    <circle cx="28" cy="20" r="2.5" fill="#100"/>
     <line x1="9" y1="15" x2="17" y2="17" stroke="#4a0000" stroke-width="2"/>
     <line x1="31" y1="15" x2="23" y2="17" stroke="#4a0000" stroke-width="2"/>
-    <!-- Horns -->
-    <polygon points="10,14 8,6 14,12" fill="#6a0000"/>
-    <polygon points="30,14 32,6 26,12" fill="#6a0000"/>
-    <!-- Mouth -->
+    <polygon points="10,14 8,5 14,12" fill="#6a0000"/>
+    <polygon points="30,14 32,5 26,12" fill="#6a0000"/>
     <path d="M14,32 Q20,37 26,32" stroke="#4a0000" stroke-width="2" fill="none"/>
-    <!-- Feet -->
     <ellipse cx="13" cy="38" rx="6" ry="3" fill="#6a0000"/>
     <ellipse cx="27" cy="38" rx="6" ry="3" fill="#6a0000"/>
   </svg>`;
 }
 
-// ============================================================
-// GAME LOGIC
-// ============================================================
-
-function startGame() {
-  // Hide overlays
-  document.getElementById('start-screen').style.display = 'none';
-  document.getElementById('gameover-screen').style.display = 'none';
-  document.getElementById('win-screen').style.display = 'none';
-
-  // Reset state
-  state.score = 0;
-  state.lives = 3;
-  state.running = true;
-  worldOffset = 0;
-  cameraX = 0;
-
-  // Measure HUD
-  HUD_H = document.getElementById('hud').offsetHeight || 60;
-  FLOOR_TOP = H - 80; // top edge of ground (80px ground height)
-
-  // Reset player — place on floor
-  player.x = 100;
-  player.y = FLOOR_TOP - player.height; // top of player sits on floor
-  player.vy = 0;
-  player.vx = 0;
-  player.onGround = false;
-  player.facingRight = true;
-  player.invincible = false;
-
-  // Create or reset player element
-  if (!player.el) {
-    player.el = document.createElement('div');
-    player.el.id = 'player';
-    screen.appendChild(player.el);
+// ─── INIT ──────────────────────────────────────────────────────
+function createStars(){
+  for(let i=0;i<70;i++){
+    let s=document.createElement('div');
+    s.className='star';
+    let sz=Math.random()*2.5+.5;
+    s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*65}%;left:${Math.random()*100}%;animation-delay:${Math.random()*2}s;animation-duration:${1+Math.random()*2}s`;
+    SCR.appendChild(s);
   }
-  player.el.innerHTML = createKurdishPlayerSVG(true);
-  updatePlayerPos();
+}
+
+function createMountains(){
+  let cols=['#1a3a6e','#24507a','#1d4060'];
+  [[5,160,0],[18,200,1],[35,140,2],[52,180,0],[68,220,1],[82,155,2]].forEach(([l,s,c])=>{
+    let m=document.createElement('div');
+    m.className='mountain';
+    m.style.cssText=`left:${l}%;border-left:${s/2}px solid transparent;border-right:${s/2}px solid transparent;border-bottom:${s}px solid ${cols[c]};bottom:78px;`;
+    SCR.appendChild(m);
+  });
+}
+
+// ─── PROCEDURAL WORLD ──────────────────────────────────────────
+function generateChunks(targetX){
+  const FT=FLOOR_T, CW=300;
+  while(genUpTo<targetX){
+    let cx=genUpTo;
+    let diff=Math.min(cx/3000,1);
+
+    // Platform
+    let pw=80+Math.floor(rand()*110);
+    let space=Math.max(0,CW-pw-80);
+    let px=cx+40+Math.floor(rand()*space);
+    let ph=FT-100-Math.floor(rand()*150);
+    ph=Math.max(HUD_H+40,Math.min(FT-80,ph));
+
+    let pel=document.createElement('div');
+    pel.className='platform';
+    pel.style.cssText=`width:${pw}px;height:20px;left:${px}px;top:${ph}px;`;
+    SCR.appendChild(pel);
+    platforms.push({el:pel,x:px,y:ph,w:pw,h:20});
+
+    // Coins above platform
+    let nc=2+Math.floor(rand()*3);
+    for(let i=0;i<nc;i++){
+      let cx2=px+8+Math.floor(rand()*Math.max(1,pw-32));
+      let cy2=ph-35-Math.floor(rand()*35);
+      addCoin(cx2,cy2);
+    }
+
+    // Ground coins
+    if(rand()<.45){addCoin(cx+30+Math.floor(rand()*(CW-60)),FT-56);}
+
+    // Block
+    if(rand()<.4){
+      let bx=px+Math.floor(rand()*Math.max(1,pw-40));
+      let by=ph-55;
+      let bel=document.createElement('div');
+      bel.className='block'; bel.innerHTML='❓';
+      bel.style.cssText=`left:${bx}px;top:${by}px;`;
+      SCR.appendChild(bel);
+      blocks.push({el:bel,x:bx,y:by,w:40,h:40,has:true});
+    }
+
+    // Enemy
+    if(rand()<.28+diff*.45){
+      let ex=cx+30+Math.floor(rand()*(CW-70));
+      let dir=rand()<.5?1:-1;
+      let spd=1.2+diff*2;
+      let eel=document.createElement('div');
+      eel.className='enemy'; eel.innerHTML=enemySVG();
+      eel.style.cssText=`left:${ex}px;top:${FT-40}px;`;
+      SCR.appendChild(eel);
+      enemies.push({el:eel,x:ex,y:FT-40,w:40,h:40,dir,spd,alive:true});
+    }
+
+    // Second platform
+    if(rand()<.38){
+      let pw2=60+Math.floor(rand()*80);
+      let px2=cx+CW-pw2-10;
+      let ph2=FT-85-Math.floor(rand()*130);
+      ph2=Math.max(HUD_H+40,Math.min(FT-80,ph2));
+      let p2=document.createElement('div');
+      p2.className='platform';
+      p2.style.cssText=`width:${pw2}px;height:20px;left:${px2}px;top:${ph2}px;`;
+      SCR.appendChild(p2);
+      platforms.push({el:p2,x:px2,y:ph2,w:pw2,h:20});
+    }
+
+    genUpTo+=CW;
+  }
+}
+
+function addCoin(x,y){
+  let el=document.createElement('div');
+  el.className='coin';
+  el.style.cssText=`left:${x}px;top:${y}px;`;
+  SCR.appendChild(el);
+  coins.push({el,x,y,w:24,h:24,collected:false});
+}
+
+// ─── GAME CONTROL ──────────────────────────────────────────────
+function startGame(){
+  document.getElementById('OvS').style.display='none';
+  document.getElementById('OvG').style.display='none';
+
+  // Dimensions
+  W=window.innerWidth; H=window.innerHeight;
+  HUD_H=document.getElementById('hud').offsetHeight||60;
+  FLOOR_T=H-80;
+
+  // State
+  state={running:true,score:0,lives:3};
+  rng=Date.now()%999983+1;
+  cameraX=0; genUpTo=0; scoreDist=0;
+
+  // Clear world
+  document.querySelectorAll('.platform,.coin,.enemy,.block,.pop').forEach(e=>e.remove());
+  platforms=[];coins=[];enemies=[];blocks=[];
+
+  // Ground
+  let g=document.getElementById('ground');
+  if(!g){g=document.createElement('div');g.id='ground';SCR.appendChild(g);}
+
+  // Player
+  if(!player.el){
+    player.el=document.createElement('div');
+    player.el.id='player';
+    SCR.appendChild(player.el);
+  }
+  player.x=80; player.y=FLOOR_T-player.h;
+  player.vx=0; player.vy=0;
+  player.onGround=true; player.inv=false; player.invT=0; player.faceR=true;
+  player.el.innerHTML=playerSVG(true);
+  player.el.style.cssText=`left:${player.x}px;top:${player.y}px;`;
+
   updateHUD();
+  generateChunks(W*3);
 
-  // Build level
-  buildLevel();
-
-  // Start loop
-  cancelAnimationFrame(animFrame);
-  lastTime = performance.now();
-  gameLoop(lastTime);
+  cancelAnimationFrame(raf);
+  lastT=performance.now();
+  loop(lastT);
 }
 
-function updateHUD() {
-  document.getElementById('score-display').textContent = state.score;
-  let hearts = '';
-  for(let i=0;i<state.lives;i++) hearts += '❤️';
-  document.getElementById('lives-display').textContent = hearts || '💔';
+function updateHUD(){
+  document.getElementById('sc').textContent=state.score;
+  let h='';for(let i=0;i<state.lives;i++)h+='❤️';
+  document.getElementById('lv').textContent=h||'💔';
 }
 
-function updatePlayerPos() {
-  player.el.style.left = (player.x - cameraX) + 'px';
-  player.el.style.top  = player.y + 'px';
-}
-
-function getRect(obj) {
-  return {
-    left: obj.x, right: obj.x + obj.width,
-    top: obj.y, bottom: obj.y + obj.height
-  };
-}
-
-function rectsOverlap(a, b) {
-  return a.left < b.right && a.right > b.left &&
-         a.top < b.bottom && a.bottom > b.top;
-}
-
-function gameLoop(ts) {
-  if (!state.running) return;
-  let dt = Math.min((ts - lastTime) / 16.67, 3);
-  lastTime = ts;
-
+// ─── GAME LOOP ─────────────────────────────────────────────────
+function loop(ts){
+  if(!state.running)return;
+  let dt=Math.min((ts-lastT)/16.67,3);
+  lastT=ts;
   update(dt);
   render();
-
-  animFrame = requestAnimationFrame(gameLoop);
+  raf=requestAnimationFrame(loop);
 }
 
-function update(dt) {
-  // Player input
-  let movingX = false;
-  if (keys['ArrowLeft'] || keys['KeyA']) {
-    player.vx = -MOVE_SPEED;
-    player.facingRight = false;
-    movingX = true;
-  } else if (keys['ArrowRight'] || keys['KeyD']) {
-    player.vx = MOVE_SPEED;
-    player.facingRight = true;
-    movingX = true;
-  } else {
-    player.vx *= 0.8;
+function update(dt){
+  // Input
+  if(KEYS['ArrowLeft']||KEYS['KeyA']){player.vx=-SPD;player.faceR=false;}
+  else if(KEYS['ArrowRight']||KEYS['KeyD']){player.vx=SPD;player.faceR=true;}
+  else{player.vx*=.78;}
+
+  if((KEYS['ArrowUp']||KEYS['KeyW']||KEYS['Space'])&&player.onGround){
+    player.vy=JFORCE; player.onGround=false;
   }
 
-  // Jump
-  if ((keys['ArrowUp'] || keys['KeyW'] || keys['Space']) && player.onGround) {
-    player.vy = JUMP_FORCE;
-    player.onGround = false;
-    spawnDust(player.x + player.width/2, H - GROUND_Y);
-  }
+  // Physics
+  player.vy+=GRAV*dt;
+  player.x+=player.vx*dt;
+  player.y+=player.vy*dt;
 
-  // Apply gravity
-  player.vy += GRAVITY * dt;
+  // Left wall
+  if(player.x<0){player.x=0;player.vx=0;}
 
-  // Move player
-  player.x += player.vx * dt;
-  player.y += player.vy * dt;
+  // Floor
+  player.onGround=false;
+  let fl=FLOOR_T-player.h;
+  if(player.y>=fl){player.y=fl;player.vy=0;player.onGround=true;}
 
-  // World boundaries
-  if (player.x < 0) player.x = 0;
-  if (player.x > WORLD_WIDTH - player.width) {
-    player.x = WORLD_WIDTH - player.width;
-    winGame();
-    return;
-  }
+  // Platforms
+  platforms.forEach(p=>{
+    if(player.x+player.w<=p.x||player.x>=p.x+p.w)return;
+    let pb=player.y+player.h;
+    let prevPb=pb-player.vy;
+    if(player.vy>=0&&prevPb<=p.y+4&&pb>=p.y){
+      player.y=p.y-player.h;player.vy=0;player.onGround=true;
+    } else if(player.vy<0&&player.y<=p.y+p.h&&player.y>=p.y){
+      player.y=p.y+p.h;player.vy=2;
+    }
+  });
 
-  // Floor collision  (player.y = top edge, player.y+height = bottom edge)
-  player.onGround = false;
-  let floorLine = FLOOR_TOP - player.height; // player.y when standing on floor
-  if (player.y >= floorLine) {
-    player.y  = floorLine;
-    player.vy = 0;
-    player.onGround = true;
-  }
-
-  // Platform collision — p.y is screen top-px of platform top surface
-  platforms.forEach(p => {
-    let pLeft  = p.x;
-    let pRight = p.x + p.w;
-    let pTop   = p.y;          // top surface of platform in screen-px
-    let pBot   = p.y + p.h;
-
-    if (player.x + player.width > pLeft && player.x < pRight) {
-      let playerBot = player.y + player.height;
-      let prevBot   = playerBot - player.vy; // approximate previous bottom
-
-      // Land on top of platform (falling down = vy positive)
-      if (player.vy >= 0 && prevBot <= pTop + 4 && playerBot >= pTop) {
-        player.y = pTop - player.height;
-        player.vy = 0;
-        player.onGround = true;
-      }
-      // Hit underside (jumping up = vy negative)
-      if (player.vy < 0 && player.y <= pBot && player.y > pTop) {
-        player.y  = pBot;
-        player.vy = 2;
+  // Blocks
+  blocks.forEach(b=>{
+    if(player.x+player.w<=b.x||player.x>=b.x+b.w)return;
+    let pb=player.y+player.h;
+    let prevPb=pb-player.vy;
+    if(player.vy>=0&&prevPb<=b.y+4&&pb>=b.y){
+      player.y=b.y-player.h;player.vy=0;player.onGround=true;
+    } else if(player.vy<0&&player.y<=b.y+b.h&&player.y>=b.y){
+      player.y=b.y+b.h;player.vy=2;
+      if(b.has){
+        b.has=false;b.el.innerHTML='⭐';b.el.classList.add('empty');
+        state.score+=200;updateHUD();
+        floatText(b.x-cameraX,b.y-10,'+200','#f5c518');
       }
     }
   });
 
-  // Block collision — b.y is screen top-px of block top surface
-  blocks.forEach(b => {
-    let bLeft  = b.x;
-    let bRight = b.x + b.w;
-    let bTop   = b.y;
-    let bBot   = b.y + b.h;
-
-    if (player.x + player.width > bLeft && player.x < bRight) {
-      let playerBot = player.y + player.height;
-      let prevBot   = playerBot - player.vy;
-
-      // Land on top
-      if (player.vy >= 0 && prevBot <= bTop + 4 && playerBot >= bTop) {
-        player.y = bTop - player.height;
-        player.vy = 0;
-        player.onGround = true;
-      }
-      // Hit underside
-      if (player.vy < 0 && player.y <= bBot && player.y > bTop) {
-        player.y  = bBot;
-        player.vy = 2;
-        if (b.has) {
-          b.has = false;
-          b.el.innerHTML = '⭐';
-          b.el.classList.add('empty');
-          state.score += 200;
-          addFloatingText(b.x - cameraX, b.y - 30, '+200', '#f5c518');
-          updateHUD();
-          spawnCoin(b.x + b.w/2, b.y - 30);
-        }
-      }
+  // Coins
+  coins.forEach(c=>{
+    if(c.collected)return;
+    if(player.x+player.w>c.x&&player.x<c.x+c.w&&player.y+player.h>c.y&&player.y<c.y+c.h){
+      c.collected=true;c.el.remove();
+      state.score+=100;updateHUD();
+      floatText(c.x-cameraX,c.y-10,'+100','#ffd700');
     }
   });
 
-  // Coin collection — c.y is screen top-px
-  coins.forEach(c => {
-    if (c.collected) return;
-    if (player.x + player.width > c.x && player.x < c.x + c.w &&
-        player.y + player.height > c.y && player.y < c.y + c.h) {
-      c.collected = true;
-      c.el.remove();
-      state.score += 100;
-      addFloatingText(c.x - cameraX, c.y - 20, '+100', '#ffd700');
-      updateHUD();
-    }
-  });
+  // Enemies
+  enemies.forEach(e=>{
+    if(!e.alive)return;
+    e.x+=e.dir*e.spd*dt;
+    if(e.x<cameraX-120)e.dir=1;
 
-  // Enemy update & collision — e.y is screen top-px
-  enemies.forEach(e => {
-    if (!e.alive) return;
-
-    e.x += e.dir * e.speed * dt;
-    if (e.x < 0 || e.x + e.w > WORLD_WIDTH) e.dir *= -1;
-
-    // Keep enemies on floor
-    e.y = FLOOR_TOP - e.h;
-
-    e.el.style.left      = (e.x - cameraX) + 'px';
-    e.el.style.top       = e.y + 'px';
-    e.el.style.transform = e.dir < 0 ? 'scaleX(-1)' : '';
-
-    if (!player.invincible) {
-      if (player.x + player.width - 6 > e.x && player.x + 6 < e.x + e.w) {
-        let playerBot = player.y + player.height;
-        // Stomp: player falling, feet near top of enemy
-        if (player.vy > 0 && playerBot >= e.y && playerBot <= e.y + 20) {
-          e.alive = false;
-          e.el.style.animation = 'coinPop 0.4s ease-out forwards';
-          setTimeout(() => e.el.remove(), 400);
-          player.vy = JUMP_FORCE * 0.55;
-          state.score += 300;
-          addFloatingText(e.x - cameraX, e.y - 20, '+300', '#27ae60');
-          updateHUD();
-        } else if (playerBot > e.y + 10 && player.y < e.y + e.h) {
+    if(!player.inv){
+      if(player.x+player.w-5>e.x&&player.x+5<e.x+e.w){
+        let pb=player.y+player.h;
+        if(player.vy>0&&pb>=e.y&&pb<=e.y+22){
+          e.alive=false;
+          e.el.style.transform='scaleY(-1)';
+          e.el.style.opacity='.4';
+          setTimeout(()=>e.el.remove(),400);
+          player.vy=JFORCE*.55;
+          state.score+=300;updateHUD();
+          floatText(e.x-cameraX,e.y-10,'+300','#27ae60');
+        } else if(pb>e.y+10&&player.y<e.y+e.h){
           hitPlayer();
         }
       }
     }
   });
 
-  // Fall into pit
-  if (player.y > H + 50) {
+  // Pit fall
+  if(player.y>H+80){
     hitPlayer();
-    player.y = FLOOR_TOP - player.height;
-    player.x = Math.max(50, player.x - 200);
+    player.y=FLOOR_T-player.h;
+    player.x=Math.max(80,player.x-100);
   }
 
-  // Update invincibility
-  if (player.invincible) {
-    player.invTimer--;
-    player.el.style.opacity = Math.sin(player.invTimer * 0.5) > 0 ? 1 : 0.3;
-    if (player.invTimer <= 0) {
-      player.invincible = false;
-      player.el.style.opacity = 1;
+  // Invincibility
+  if(player.inv){
+    player.invT--;
+    player.el.style.opacity=Math.sin(player.invT*.45)>0?'1':'.25';
+    if(player.invT<=0){player.inv=false;player.el.style.opacity='1';}
+  }
+
+  // Camera
+  let tgt=player.x-W*.3;
+  cameraX+=(tgt-cameraX)*.13;
+  if(cameraX<0)cameraX=0;
+
+  // Generate more world
+  generateChunks(player.x+W*4);
+
+  // Cleanup far-left objects
+  let cleanX=player.x-W*1.5;
+  platforms=platforms.filter(p=>{if(p.x+p.w<cleanX){p.el.remove();return false;}return true;});
+  coins=coins.filter(c=>{if(c.collected)return false;if(c.x<cleanX){c.el.remove();return false;}return true;});
+  enemies=enemies.filter(e=>{if(!e.alive)return false;if(e.x+e.w<cleanX){e.el.remove();return false;}return true;});
+  blocks=blocks.filter(b=>{if(b.x+b.w<cleanX){b.el.remove();return false;}return true;});
+
+  // Distance score
+  let nd=Math.floor(player.x/80)*10;
+  if(nd>scoreDist){state.score+=nd-scoreDist;scoreDist=nd;updateHUD();}
+  document.getElementById('dist').textContent='📏 '+Math.floor(player.x/10)+' مەتر';
+}
+
+function render(){
+  // Player
+  player.el.style.left=(player.x-cameraX)+'px';
+  player.el.style.top=player.y+'px';
+  player.el.innerHTML=playerSVG(player.faceR);
+  player.el.className=!player.onGround?'jumping':(Math.abs(player.vx)>.5?'walk':'');
+
+  // World
+  platforms.forEach(p=>{p.el.style.left=(p.x-cameraX)+'px';p.el.style.top=p.y+'px';});
+  coins.forEach(c=>{if(!c.collected){c.el.style.left=(c.x-cameraX)+'px';c.el.style.top=c.y+'px';}});
+  blocks.forEach(b=>{b.el.style.left=(b.x-cameraX)+'px';b.el.style.top=b.y+'px';});
+  enemies.forEach(e=>{
+    if(e.alive){
+      e.el.style.left=(e.x-cameraX)+'px';
+      e.el.style.top=e.y+'px';
+      e.el.style.transform=e.dir<0?'scaleX(-1)':'';
     }
-  }
-
-  // Camera follow
-  let targetCam = player.x - W * 0.35;
-  cameraX += (targetCam - cameraX) * 0.12;
-  cameraX = Math.max(0, Math.min(cameraX, WORLD_WIDTH - W));
-
-  // Check win (reached near end)
-  if (player.x > 2800) {
-    winGame();
-  }
-}
-
-function render() {
-  // Update player
-  updatePlayerPos();
-
-  // Update player sprite direction
-  player.el.innerHTML = createKurdishPlayerSVG(player.facingRight);
-
-  // Walking animation class
-  if (!player.onGround) {
-    player.el.className = 'jumping';
-  } else if (Math.abs(player.vx) > 0.5) {
-    player.el.className = 'walking';
-  } else {
-    player.el.className = '';
-  }
-
-  // Parallax - scroll world elements
-  platforms.forEach(p => {
-    p.el.style.left = (p.x - cameraX) + 'px';
-    p.el.style.top = p.y + 'px';
-  });
-  coins.forEach(c => {
-    if (!c.collected) c.el.style.left = (c.x - cameraX) + 'px';
-  });
-  blocks.forEach(b => {
-    b.el.style.left = (b.x - cameraX) + 'px';
-    b.el.style.top = b.y + 'px';
-  });
-  let flag = document.getElementById('flag');
-  if (flag) flag.style.left = (2820 - cameraX) + 'px';
-}
-
-function hitPlayer() {
-  if (player.invincible) return;
-  state.lives--;
-  updateHUD();
-  player.invincible = true;
-  player.invTimer = 120;
-  if (state.lives <= 0) {
-    gameOver();
-  }
-}
-
-function winGame() {
-  state.running = false;
-  document.getElementById('win-score').textContent = state.score;
-  document.getElementById('win-screen').style.display = 'flex';
-}
-
-function gameOver() {
-  state.running = false;
-  document.getElementById('final-score').textContent = state.score;
-  document.getElementById('gameover-screen').style.display = 'flex';
-}
-
-function spawnDust(x, y) {
-  for (let i=0;i<4;i++) {
-    let d = document.createElement('div');
-    d.className = 'dust';
-    let angle = Math.random()*Math.PI;
-    let dist = 20 + Math.random()*20;
-    let screenTop = HUD_H + getGameH() - GROUND_Y - 8;
-    d.style.cssText = `left:${x-cameraX}px;top:${screenTop}px;--dx:${Math.cos(angle)*dist}px;--dy:${-Math.sin(angle)*dist}px`;
-    screen.appendChild(d);
-    setTimeout(()=>d.remove(), 500);
-  }
-}
-
-function spawnCoin(x, y) {
-  let c = document.createElement('div');
-  c.className = 'coin';
-  c.style.cssText = `left:${x-cameraX}px;top:${y}px;animation:coinPop 0.5s ease-out forwards`;
-  screen.appendChild(c);
-  setTimeout(()=>c.remove(), 500);
-}
-
-function addFloatingText(x, y, text, color) {
-  let el = document.createElement('div');
-  el.className = 'coin-pop';
-  el.textContent = text;
-  el.style.cssText = `left:${x}px;top:${y}px;color:${color};`;
-  screen.appendChild(el);
-  setTimeout(()=>el.remove(), 700);
-}
-
-// ============================================================
-// INPUT
-// ============================================================
-
-document.addEventListener('keydown', e => { keys[e.code] = true; e.preventDefault(); });
-document.addEventListener('keyup', e => { keys[e.code] = false; });
-
-// Mobile controls
-function setupMobile() {
-  let btnLeft = document.getElementById('btn-left');
-  let btnRight = document.getElementById('btn-right');
-  let btnJump = document.getElementById('btn-jump');
-
-  ['touchstart','mousedown'].forEach(ev => {
-    btnLeft.addEventListener(ev, e=>{ keys['ArrowLeft']=true; e.preventDefault(); }, {passive:false});
-    btnRight.addEventListener(ev, e=>{ keys['ArrowRight']=true; e.preventDefault(); }, {passive:false});
-    btnJump.addEventListener(ev, e=>{ keys['ArrowUp']=true; e.preventDefault(); }, {passive:false});
-  });
-  ['touchend','mouseup','touchcancel'].forEach(ev => {
-    btnLeft.addEventListener(ev, ()=> keys['ArrowLeft']=false);
-    btnRight.addEventListener(ev, ()=> keys['ArrowRight']=false);
-    btnJump.addEventListener(ev, ()=> keys['ArrowUp']=false);
   });
 }
 
-// Resize
-window.addEventListener('resize', ()=>{
-  W = window.innerWidth;
-  H = window.innerHeight;
-});
+function hitPlayer(){
+  if(player.inv)return;
+  state.lives--;updateHUD();
+  if(state.lives<=0){gameOver();return;}
+  player.inv=true;player.invT=130;
+}
 
-// ============================================================
-// BOOT
-// ============================================================
+function gameOver(){
+  state.running=false;
+  document.getElementById('fsco').textContent=state.score;
+  document.getElementById('fdist').textContent=Math.floor(player.x/10);
+  document.getElementById('OvG').style.display='flex';
+}
 
+function floatText(x,y,txt,col){
+  let el=document.createElement('div');
+  el.className='pop';el.textContent=txt;
+  el.style.cssText=`left:${x}px;top:${y}px;color:${col};`;
+  SCR.appendChild(el);
+  setTimeout(()=>el.remove(),750);
+}
+
+// ─── INPUT ─────────────────────────────────────────────────────
+document.addEventListener('keydown',e=>{KEYS[e.code]=true;e.preventDefault();});
+document.addEventListener('keyup',e=>{KEYS[e.code]=false;});
+
+function hold(key,el){
+  el.addEventListener('touchstart', e=>{e.preventDefault();KEYS[key]=true;},{passive:false});
+  el.addEventListener('touchend',   e=>{e.preventDefault();KEYS[key]=false;},{passive:false});
+  el.addEventListener('touchcancel',e=>{e.preventDefault();KEYS[key]=false;},{passive:false});
+  el.addEventListener('mousedown',()=>KEYS[key]=true);
+  el.addEventListener('mouseup',  ()=>KEYS[key]=false);
+  el.addEventListener('mouseleave',()=>KEYS[key]=false);
+}
+hold('ArrowLeft', document.getElementById('bL'));
+hold('ArrowRight',document.getElementById('bR'));
+hold('ArrowUp',   document.getElementById('bJ'));
+
+window.addEventListener('resize',()=>{W=window.innerWidth;H=window.innerHeight;});
+
+// ─── BOOT ──────────────────────────────────────────────────────
 createStars();
 createMountains();
-setupMobile();
-
-// Touch swipe jump
-let touchStartY = 0;
-document.addEventListener('touchstart', e=>{ touchStartY = e.touches[0].clientY; }, {passive:true});
-document.addEventListener('touchend', e=>{
-  let dy = touchStartY - e.changedTouches[0].clientY;
-  if (dy > 40) keys['ArrowUp'] = true;
-  setTimeout(()=>keys['ArrowUp']=false, 100);
-}, {passive:true});
-
 </script>
 
 </body>
